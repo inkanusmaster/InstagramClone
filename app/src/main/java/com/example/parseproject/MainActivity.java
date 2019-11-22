@@ -2,15 +2,16 @@ package com.example.parseproject;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
-import android.widget.Button;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
-import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.LogInCallback;
 import com.parse.ParseAnalytics;
@@ -19,10 +20,33 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.Objects;
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener {
 
     String username, password;
     EditText usernameEditText, passwordEditText;
+    ConstraintLayout backgroundLayout;
+    ImageView logoImageView;
+
+    // po to implementujemy onkeylistener, żeby po kliknięciu w enter na klawiaturze...
+    //... LOGOWALO USERA
+    @Override
+    public boolean onKey(View view, int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
+            login(view);
+        }
+        return false;
+    }
+
+    // po to implementujemy onclicklistener żeby po kliknięciu w background czy w logo, chowała się klawiatura. A oto metoda onclick
+    @Override
+    public void onClick(View view) {
+        if (view.getId() == R.id.backgroundLayout || view.getId() == R.id.logoImageView) {
+            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE); //te 2 linijki chowają klawę
+            inputMethodManager.hideSoftInputFromWindow(Objects.requireNonNull(getCurrentFocus()).getWindowToken(), 0);
+        }
+    }
 
     public void login(View view) {
         ParseUser.logInInBackground(String.valueOf(usernameEditText.getText()), String.valueOf(passwordEditText.getText()), new LogInCallback() {
@@ -79,6 +103,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         usernameEditText = findViewById(R.id.usernameEditText);
         passwordEditText = findViewById(R.id.passwordEditText);
+        backgroundLayout = findViewById(R.id.backgroundLayout);
+        logoImageView = findViewById(R.id.logoImageView);
+        logoImageView.setOnClickListener(this); //żeby po kliknięciu klawiatura się chowała to implementujemy to
+        backgroundLayout.setOnClickListener(this); //j.w.
 
         ParseAnalytics.trackAppOpenedInBackground(getIntent());
     }
