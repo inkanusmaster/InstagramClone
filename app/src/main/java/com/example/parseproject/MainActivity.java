@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         if (username.isEmpty() || password.isEmpty()) {
             Toast.makeText(MainActivity.this, "USERNAME OR PASSWORD CANNOT BE EMPTY!", Toast.LENGTH_SHORT).show();
         } else {
-            ParseQuery<ParseUser> query = ParseUser.getQuery(); //ZMIEN PARESEOBJECT NA PARSEUSER!!!!
+            ParseQuery<ParseUser> query = ParseUser.getQuery();
             query.whereEqualTo("username", username);
             query.getFirstInBackground(new GetCallback<ParseUser>() {
                 @Override
