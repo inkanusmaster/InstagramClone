@@ -19,9 +19,6 @@ public class StarterApplication extends Application {
         // Enable Local Datastore.
         Parse.enableLocalDatastore(this);
 
-        // PASS
-        // http://18.130.9.67/apps
-        // zy0djsQQ5C7K
 
         // /home/bitnami/apps/parse/htdocs/server.js
         Parse.initialize(new Parse.Configuration.Builder(getApplicationContext())
