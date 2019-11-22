@@ -1,6 +1,7 @@
 package com.example.parseproject;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -8,10 +9,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-
 import com.parse.GetCallback;
 import com.parse.LogInCallback;
 import com.parse.ParseAnalytics;
@@ -48,13 +47,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public void login(View view) {
-        ParseUser.logInInBackground(String.valueOf(usernameEditText.getText()), String.valueOf(passwordEditText.getText()), new LogInCallback() {
+    // otwiera drugą aktywność z listą userów. To będzie po zalogowaniu
+    public void showUserList(){
+        Intent intentUserListActivity = new Intent(getApplicationContext(), UserListActivity.class);
+        startActivity(intentUserListActivity);
+    }
+
+    public void login(View view) { // linijka niżej tolowercase bo moge sie zalogować jako Fury czy fury to jest to samo..
+        ParseUser.logInInBackground(String.valueOf(usernameEditText.getText()).toLowerCase(), String.valueOf(passwordEditText.getText()), new LogInCallback() {
             @SuppressLint("ShowToast")
             @Override
             public void done(ParseUser user, ParseException e) {
                 if (user != null) {
                     Toast.makeText(MainActivity.this, "LOGIN SUCCESS!", Toast.LENGTH_SHORT).show();
+                    showUserList();
+
                 } else {
                     Toast.makeText(MainActivity.this, "INVALID CREDENTIALS!", Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
@@ -66,9 +73,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void signup(View view) {
         username = String.valueOf(usernameEditText.getText());
         password = String.valueOf(passwordEditText.getText());
+
         if (username.isEmpty() || password.isEmpty()) {
             Toast.makeText(MainActivity.this, "USERNAME OR PASSWORD CANNOT BE EMPTY!", Toast.LENGTH_SHORT).show();
         } else {
+            username = username.toLowerCase(); // zapisujemy w bazie małymi literami!
             ParseQuery<ParseUser> query = ParseUser.getQuery();
             query.whereEqualTo("username", username);
             query.getFirstInBackground(new GetCallback<ParseUser>() {
@@ -107,6 +116,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         logoImageView = findViewById(R.id.logoImageView);
         logoImageView.setOnClickListener(this); //żeby po kliknięciu klawiatura się chowała to implementujemy to
         backgroundLayout.setOnClickListener(this); //j.w.
+
+        // jeśli już jesteśmy zalogowani (po uruchomieniu aplikacji) to też pokazuje listę userów
+//        if(ParseUser.getCurrentUser() != null){
+//            showUserList();
+//        }
 
         ParseAnalytics.trackAppOpenedInBackground(getIntent());
     }
