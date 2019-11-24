@@ -15,6 +15,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -56,10 +58,10 @@ public class UserListActivity extends AppCompatActivity {
                 object.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
-                        if(e == null){
-                            Toast.makeText(UserListActivity.this,"IMAGE UPLOADED!",Toast.LENGTH_SHORT).show();
+                        if (e == null) {
+                            Toast.makeText(UserListActivity.this, "IMAGE UPLOADED!", Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(UserListActivity.this,"IMAGE NOT UPLOADED! SOMETHING WENT WRONG!",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(UserListActivity.this, "IMAGE NOT UPLOADED! SOMETHING WENT WRONG!", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -103,6 +105,10 @@ public class UserListActivity extends AppCompatActivity {
             } else {
                 getPhoto();
             }
+        } else if (item.getItemId() == R.id.logout) {
+            ParseUser.logOut(); // wylogowujemy usera...
+            Intent intent = new Intent(getApplicationContext(),MainActivity.class); // ale chcemy wrócić do login screen.
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -111,6 +117,7 @@ public class UserListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_list);
+        setTitle("User Feed");
 
         if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
@@ -119,6 +126,16 @@ public class UserListActivity extends AppCompatActivity {
         final ListView usersListView = findViewById(R.id.usersListView);
         final ArrayList<String> usersArrayList = new ArrayList<>();
         final ArrayAdapter<String> usersArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, usersArrayList);
+
+        // ustawienie klikania na userze z listy
+        usersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int i, long id) {
+                Intent intent = new Intent(getApplicationContext(), UserFeedActivity.class); // otwieramy intent UserFeedActivity
+                intent.putExtra("username", usersArrayList.get(i)); // przesyłamy do intentu zaznaczonego usera, czyli get(i) i nazwe username (bedzie potrzebne do odczytu).
+                startActivity(intent);
+            }
+        });
 
         ParseQuery<ParseUser> query = ParseUser.getQuery();
         query.whereNotEqualTo("username", ParseUser.getCurrentUser().getUsername()); // nie chcemy wyświetlić swojego usera
@@ -139,6 +156,5 @@ public class UserListActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 }

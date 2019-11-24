@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">InstaApp by Fury</string>
     <string name="share">Share</string>
+    <string name="logout">Logout</string>
 </resources>
