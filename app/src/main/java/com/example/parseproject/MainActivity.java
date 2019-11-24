@@ -9,8 +9,10 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+
 import com.parse.GetCallback;
 import com.parse.LogInCallback;
 import com.parse.ParseAnalytics;
@@ -48,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     // otwiera drugą aktywność z listą userów. To będzie po zalogowaniu
-    public void showUserList(){
+    public void showUserList() {
         Intent intentUserListActivity = new Intent(getApplicationContext(), UserListActivity.class);
         startActivity(intentUserListActivity);
     }
